@@ -1,0 +1,32 @@
+{
+  "name": "3d-smash-crab",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5",
+    "live-server": "^1.2.2",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack",
+    "server": "live-server ./public "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RichiKennedy/3D-Smash-Crab.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RichiKennedy/3D-Smash-Crab/issues"
+  },
+  "homepage": "https://github.com/RichiKennedy/3D-Smash-Crab#readme",
+  "description": ""
+}
