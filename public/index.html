@@ -1,30 +1,150 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D SMASH-A-CRAB</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <!-- FBX -->
+    <script src="https://unpkg.com/aframe-extras@6.1.0/dist/aframe-extras.loaders.min.js"></script>
+    <script src="https://unpkg.com/three@0.124.0/examples/js/libs/inflate.min.js"></script>
   </head>
+
   <body>
     <a-scene>
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder
-        position="1 0.75 -3"
-        radius="0.5"
-        height="1.5"
-        color="#FFC65D"
-      ></a-cylinder>
+      <a-assets>
+        <a-asset-item
+          id="sun-obj"
+          src="/assets/models/Sun/model.obj"
+        ></a-asset-item>
+        <a-asset-item
+          id="sun-mtl"
+          src="/assets/models/Sun/materials.mtl"
+        ></a-asset-item>
+        <a-mixin
+          id="sun"
+          scale="0.8 0.8 0.8"
+          position="-7.62 6.524 -13.22"
+          animation="property: rotation; dur: 90100;  loop: true;  easing: linear; to: 0 360 0;"
+        ></a-mixin>
+      </a-assets>
+      <!-- camera -->
+      <a-entity
+        camera
+        position="0 1.6 0"
+        look-controls="pointerLockEnabled: true"
+      >
+        <!-- hammer -->
+        <a-entity
+          position="0.075 -0.05 -0.07"
+          scale=" 0.25 0.25 0.25"
+          id="hammer"
+          fbx-model="src: url(/assets/models/weapon/hammer.fbx);"
+          animation-mixer="clip: *;"
+          rotation="90 0 60"
+        ></a-entity>
+        <a-entity
+          scale="0.05 0.05 0.05"
+          cursor="fuse: true; "
+          position="0 0 -1"
+          geometry="primitive: ring;"
+          material="color: black; shader: flat"
+          ><a-animation
+            begin="cursor-fusing"
+            easing="ease-in"
+            attribute="scale"
+            dur="150"
+            fill="backwards"
+            from="0.1 0.1 0.1"
+            to="0.5 0.5 0.5"
+          ></a-animation>
+        </a-entity>
+      </a-entity>
+      <!-- ^^^camera^^^ -->
+
+      <!-- sun -->
+      <a-entity mixin="sun" obj-model="obj: #sun-obj; mtl: #sun-mtl"></a-entity>
+
+      <!-- table -->
+      <a-entity
+        scale="3  1 2"
+        position="0 0 -3"
+        material="color: orange"
+        geometry="primitive: box"
+      ></a-entity>
+
+      <!-- holes -->
+      <a-entity position="0 0.5 -3" id="holes">
+        <!-- hole1 -->
+        <a-entity
+          position="1 0 0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+        <!-- hole2 -->
+        <a-entity
+          position="0 0 0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+        <!-- hole3 -->
+        <a-entity
+          position="-1 0 0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+        <!-- hole4 -->
+        <a-entity
+          position="-1 0 -0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+        <!-- hole5 -->
+        <a-entity
+          position="0 0 -0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+        <!-- hole6 -->
+        <a-entity
+          position="1 0 -0.5"
+          material="color: black"
+          scale="0.25 0.1 0.25"
+          geometry="primitive: cylinder"
+        ></a-entity>
+      </a-entity>
+
+      <a-entity position="0 0.6 -3 " id="crabs">
+        <a-entity
+          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
+          animation-mixer="clip: *;"
+          scale="0.0026 0.0026 0.0026"
+          position="1 0 0.5"
+        ></a-entity>
+        <a-entity
+          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
+          animation-mixer="clip: *;"
+          scale="0.0026 0.0026 0.0026"
+          position="0 0 -0.5"
+        ></a-entity>
+        <a-entity
+          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
+          animation-mixer="clip: *;"
+          scale="0.0026 0.0026 0.0026"
+          position="-1 0 0.5"
+        ></a-entity>
+      </a-entity>
+
       <a-plane
         position="0 0 -4"
         rotation="-90 0 0"
-        width="4"
-        height="4"
-        color="#7BC8A4"
+        width="8"
+        height="8"
+        color="#f3c212"
       ></a-plane>
-      <a-sky color="#ECECEC"></a-sky>
+
+      <a-sky color="blue"></a-sky>
     </a-scene>
   </body>
 </html>
