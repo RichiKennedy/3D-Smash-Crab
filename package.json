@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "aframe-state-component": "^7.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
