@@ -1,7 +1,7 @@
 import "aframe-state-component";
 AFRAME.registerState({
   initialState: {
-    score: 2,
+    score: 0,
   },
 
   handlers: {
