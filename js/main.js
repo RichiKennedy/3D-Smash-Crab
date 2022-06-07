@@ -1,5 +1,11 @@
 // hammer-logic component
 import "./components/hammer-logic";
 
-// state hndler
-import "./components/state";
+// state handler
+import "./state";
+
+// world component
+import "./components/world";
+
+// crab logic
+import "./components/crab-logic";

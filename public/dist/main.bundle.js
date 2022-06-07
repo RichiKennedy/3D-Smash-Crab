@@ -1242,6 +1242,52 @@ function makeCallDirty(arr, fn) {
 
 /***/ }),
 
+/***/ "./js/components/crab-logic.js":
+/*!*************************************!*\
+  !*** ./js/components/crab-logic.js ***!
+  \*************************************/
+/***/ (() => {
+
+AFRAME.registerComponent("crab-logic", {
+  init: function init() {
+    this.time = 0;
+    this.randomInterval = Math.floor(Math.random() * Math.floor(2000)) + 1000;
+    this.can_die = true;
+    this.el.addEventListener("switch", function () {
+      var visible = this.el.getAttribute("visible");
+      this.el.setAttribute("visible", !visible);
+    }.bind(this));
+
+    var hammer_hit = function hammer_hit() {
+      var crabs = document.getElementById("crab-container");
+
+      if (this.can_die === true) {
+        crabs.removeChild(this.el);
+        AFRAME.scenes[0].emit("increaseScore", {
+          points: 1
+        });
+        console.log("die");
+        var hammer = document.getElementById("player- hammer");
+        hammer.emit("hit");
+      }
+    };
+
+    this.el.addEventListener("mousedown", hammer_hit);
+    this.el.addEventListener("click", hammer_hit);
+  },
+  tick: function tick(time, timeDelta) {
+    this.time += timeDelta;
+    console.log();
+
+    if (this.time >= this.randomInterval) {
+      this.el.emit("switch");
+      this.time = 0;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./js/components/hammer-logic.js":
 /*!***************************************!*\
   !*** ./js/components/hammer-logic.js ***!
@@ -1251,28 +1297,121 @@ function makeCallDirty(arr, fn) {
 AFRAME.registerComponent("hammer-logic", {
   init: function init() {
     var crabs = [];
-    this.el.addEventListener("crabs_appear", function () {
-      crabs = Array.prototype.slice.call(document.querySelectorAll(".crab"));
-    });
-    this.el.addEventListener("animationStart", function () {
+    console.log("hammer");
+    this.el.addEventListener("crabs_spawned", function () {
+      crabs = this.get_crabs();
+    }.bind(this));
+    this.el.addEventListener("animationstart", function () {
       crabs.map(function (crab) {
-        crab.emit("dontDie");
-      });
+        crab.emit("wontDie");
+      }.bind(this));
     });
-    this.el.addEventListener("animationEnd", function () {
+    this.el.addEventListener("animationend", function () {
       crabs.map(function (crab) {
-        crab.emit("die");
-      });
+        crab.emit("canDie");
+      }.bind(this));
     });
+  },
+  get_crabs: function get_crabs() {
+    crabs = Array.prototype.slice.call(document.querySelectorAll(".crab"));
+    console.log(crabs);
+    return crabs;
   }
+}); // this.whackableMoles = Array.from(document.querySelectorAll('.mole'));
+
+/***/ }),
+
+/***/ "./js/components/world.js":
+/*!********************************!*\
+  !*** ./js/components/world.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _crabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../crabs */ "./js/crabs.js");
+/* harmony import */ var _holes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../holes */ "./js/holes.js");
+
+
+AFRAME.registerComponent("world", {
+  schema: {},
+  init: function init() {
+    this.time = 0;
+    console.log("world");
+    this.spawn_crabs();
+  },
+  spawn_crabs: function spawn_crabs() {
+    var crabs = document.getElementById("crab-container");
+    _holes__WEBPACK_IMPORTED_MODULE_1__.holePositions.map(function (position) {
+      var crab = (0,_crabs__WEBPACK_IMPORTED_MODULE_0__.create_yabbi)(position);
+      crabs.appendChild(crab);
+    });
+    var hammer = document.getElementById("player-hammer");
+    hammer.emit("crabs_spawned");
+  },
+  tick: function tick(time, timeDelta) {}
 });
 
 /***/ }),
 
-/***/ "./js/components/state.js":
-/*!********************************!*\
-  !*** ./js/components/state.js ***!
-  \********************************/
+/***/ "./js/crabs.js":
+/*!*********************!*\
+  !*** ./js/crabs.js ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "create_yabbi": () => (/* binding */ create_yabbi)
+/* harmony export */ });
+var create_yabbi = function create_yabbi(position) {
+  var yabbi = document.createElement("a-entity");
+  yabbi.setAttribute("mixin", "crab");
+  yabbi.setAttribute("position", position);
+  yabbi.setAttribute("scale", {
+    x: 0.3,
+    y: 0.3,
+    z: 0.3
+  });
+  yabbi.setAttribute("rotation", {
+    x: 180,
+    y: 0,
+    z: 180
+  });
+  yabbi.classList.add("crab");
+  return yabbi;
+};
+
+/***/ }),
+
+/***/ "./js/holes.js":
+/*!*********************!*\
+  !*** ./js/holes.js ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createPosition": () => (/* binding */ createPosition),
+/* harmony export */   "holePositions": () => (/* binding */ holePositions)
+/* harmony export */ });
+var createPosition = function createPosition(x, y, z) {
+  return {
+    x: x,
+    y: y,
+    z: z
+  };
+};
+var holePositions = [createPosition(1, 0, 0.5), createPosition(0, 0, 0.5), createPosition(-1, 0, 0.5), createPosition(-1, 0, -0.5), createPosition(0, 0, -0.5), createPosition(1, 0, -0.5)];
+
+/***/ }),
+
+/***/ "./js/state.js":
+/*!*********************!*\
+  !*** ./js/state.js ***!
+  \*********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1282,7 +1421,7 @@ __webpack_require__.r(__webpack_exports__);
 
 AFRAME.registerState({
   initialState: {
-    score: 2
+    score: 0
   },
   handlers: {
     decreaseScore: function decreaseScore(state, action) {
@@ -1374,9 +1513,16 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_hammer_logic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/hammer-logic */ "./js/components/hammer-logic.js");
 /* harmony import */ var _components_hammer_logic__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_components_hammer_logic__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _components_state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/state */ "./js/components/state.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./state */ "./js/state.js");
+/* harmony import */ var _components_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/world */ "./js/components/world.js");
+/* harmony import */ var _components_crab_logic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/crab-logic */ "./js/components/crab-logic.js");
+/* harmony import */ var _components_crab_logic__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_components_crab_logic__WEBPACK_IMPORTED_MODULE_3__);
 // hammer-logic component
- // state hndler
+ // state handler
+
+ // world component
+
+ // crab logic
 
 
 })();
