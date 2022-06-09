@@ -1251,15 +1251,23 @@ function makeCallDirty(arr, fn) {
 AFRAME.registerComponent("crab-logic", {
   init: function init() {
     this.time = 0;
-    this.randomInterval = Math.floor(Math.random() * Math.floor(2000)) + 1000;
+    this.randomInterval = Math.floor(Math.random() * Math.floor(2000)) + 2000;
     this.can_die = true;
     this.el.addEventListener("switch", function () {
       var visible = this.el.getAttribute("visible");
       this.el.setAttribute("visible", !visible);
     }.bind(this));
+    this.el.addEventListener("candie", function () {
+      this.can_die = true;
+      console.log("clicked");
+    }.bind(this));
+    this.el.addEventListener("dontdie", function () {
+      this.can_die = false;
+    }.bind(this));
 
-    var hammer_hit = function hammer_hit() {
+    var hammer_hit = function () {
       var crabs = document.getElementById("crab-container");
+      var hit = document.getElementById("hit");
 
       if (this.can_die === true) {
         crabs.removeChild(this.el);
@@ -1267,17 +1275,17 @@ AFRAME.registerComponent("crab-logic", {
           points: 1
         });
         console.log("die");
-        var hammer = document.getElementById("player- hammer");
-        hammer.emit("hit");
+        var hammer = document.getElementById("player-hammer");
+        hammer.emit("rotate");
+        hit.components.sound.playSound();
       }
-    };
+    }.bind(this);
 
     this.el.addEventListener("mousedown", hammer_hit);
     this.el.addEventListener("click", hammer_hit);
   },
   tick: function tick(time, timeDelta) {
     this.time += timeDelta;
-    console.log();
 
     if (this.time >= this.randomInterval) {
       this.el.emit("switch");
@@ -1297,27 +1305,55 @@ AFRAME.registerComponent("crab-logic", {
 AFRAME.registerComponent("hammer-logic", {
   init: function init() {
     var crabs = [];
-    console.log("hammer");
     this.el.addEventListener("crabs_spawned", function () {
       crabs = this.get_crabs();
     }.bind(this));
     this.el.addEventListener("animationstart", function () {
       crabs.map(function (crab) {
-        crab.emit("wontDie");
+        crab.emit("dontdie");
       }.bind(this));
     });
     this.el.addEventListener("animationend", function () {
       crabs.map(function (crab) {
-        crab.emit("canDie");
+        crab.emit("candie");
       }.bind(this));
     });
   },
   get_crabs: function get_crabs() {
     crabs = Array.prototype.slice.call(document.querySelectorAll(".crab"));
-    console.log(crabs);
     return crabs;
   }
 }); // this.whackableMoles = Array.from(document.querySelectorAll('.mole'));
+
+/***/ }),
+
+/***/ "./js/components/timer-view.js":
+/*!*************************************!*\
+  !*** ./js/components/timer-view.js ***!
+  \*************************************/
+/***/ (() => {
+
+AFRAME.registerComponent("timer-view", {
+  init: function init() {
+    console.log("timer-view");
+    this.el.setAttribute("text", "value", "start game");
+  },
+  tick: function tick(time, timeDelta) {
+    var world = document.querySelector("a-scene");
+
+    var _world$getAttribute = world.getAttribute("world"),
+        gametime = _world$getAttribute.gametime,
+        timer_ongoing = _world$getAttribute.timer_ongoing;
+
+    var pretty_time = Math.ceil(gametime / 1000);
+
+    if (timer_ongoing) {
+      this.el.setAttribute("text", "value", pretty_time);
+    } else {
+      this.el.setAttribute("text", "value", "Timer ended");
+    }
+  }
+});
 
 /***/ }),
 
@@ -1334,10 +1370,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 AFRAME.registerComponent("world", {
-  schema: {},
+  schema: {
+    gametime: {
+      type: "float",
+      "default": 0.0
+    },
+    timer_ongoing: {
+      type: "boolean",
+      "default": true
+    }
+  },
   init: function init() {
-    this.time = 0;
-    console.log("world");
+    this.time = 0; // game lasts 1 0 seconds
+
+    this.el.setAttribute("world", "gametime", 10.0 * 1000); // start the timer
+
+    this.el.setAttribute("world", "timer_ongoing,", true); // add game reset listener
+
+    this.el.addEventListener("click", this.reset_game.bind(this));
     this.spawn_crabs();
   },
   spawn_crabs: function spawn_crabs() {
@@ -1349,7 +1399,80 @@ AFRAME.registerComponent("world", {
     var hammer = document.getElementById("player-hammer");
     hammer.emit("crabs_spawned");
   },
-  tick: function tick(time, timeDelta) {}
+  kill_all_crabs: function kill_all_crabs() {
+    var crab_container = document.getElementById("crab-container");
+    var crabs = document.querySelectorAll(".crab");
+    crabs.forEach(function (crab) {
+      crab_container.removeChild(crab);
+    });
+  },
+  reset_game: function reset_game() {
+    var _this$el$getAttribute = this.el.getAttribute("world"),
+        timer_ongoing = _this$el$getAttribute.timer_ongoing;
+
+    if (timer_ongoing === false) {
+      // kill the crabs
+      this.kill_all_crabs(); //   reset score
+
+      AFRAME.scenes[0].emit("resetScore", {}); // reset timer
+      // game lasts 1 0 seconds
+
+      this.el.setAttribute("world", "gametime", 10.0 * 1000); // start the timer
+
+      this.el.setAttribute("world", "timer_ongoing,", true);
+    }
+  },
+  show_win_text: function show_win_text() {
+    var win_text = document.getElementById("winning-text");
+    var visible = win_text.getAttribute("visible");
+
+    if (visible === false) {
+      win_text.setAttribute("visible", true);
+    }
+  },
+  hide_win_text: function hide_win_text() {
+    var win_text = document.getElementById("winning-text");
+    var visible = win_text.getAttribute("visible");
+
+    if (visible === true) {
+      win_text.setAttribute("visible", false);
+    }
+  },
+  tick: function tick(time, timeDelta) {
+    var crabs = document.querySelectorAll(".crab"); // decrement the game timer
+
+    var _this$el$getAttribute2 = this.el.getAttribute("world"),
+        gametime = _this$el$getAttribute2.gametime,
+        timer_ongoing = _this$el$getAttribute2.timer_ongoing;
+
+    var updated_gametime = gametime - timeDelta;
+
+    if (timer_ongoing) {
+      if (Math.ceil(updated_gametime / 1000) >= 0) {
+        this.el.setAttribute("world", "gametime", updated_gametime);
+      } else {
+        this.el.setAttribute("world", "timer_ongoing", false);
+      }
+    }
+
+    if (crabs.length <= 0 && timer_ongoing) {
+      this.time += timeDelta;
+
+      if (this.time >= 1000) {
+        this.time = 0;
+        this.spawn_crabs();
+      }
+    }
+
+    if (timer_ongoing == true) {
+      this.hide_win_text();
+    }
+
+    if (timer_ongoing === false) {
+      this.kill_all_crabs();
+      this.show_win_text();
+    }
+  }
 });
 
 /***/ }),
@@ -1429,6 +1552,9 @@ AFRAME.registerState({
     },
     increaseScore: function increaseScore(state, action) {
       state.score += action.points;
+    },
+    resetScore: function resetScore(state, action) {
+      state.score = 0;
     }
   }
 });
@@ -1517,12 +1643,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_world__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/world */ "./js/components/world.js");
 /* harmony import */ var _components_crab_logic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/crab-logic */ "./js/components/crab-logic.js");
 /* harmony import */ var _components_crab_logic__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_components_crab_logic__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_timer_view__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/timer-view */ "./js/components/timer-view.js");
+/* harmony import */ var _components_timer_view__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_components_timer_view__WEBPACK_IMPORTED_MODULE_4__);
 // hammer-logic component
  // state handler
 
  // world component
 
  // crab logic
+
+ // timer view
 
 
 })();

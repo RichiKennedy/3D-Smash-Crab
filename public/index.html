@@ -14,7 +14,15 @@
 
   <body>
     <a-scene world>
+      <a-entity light="type: ambient; color: white"></a-entity>
       <a-assets>
+        <!-- sound hammer hit -->
+        <audio
+          id="slap"
+          src="/assets/models/karateChop.mp3"
+          preload="auto"
+        ></audio>
+        <!-- sun -->
         <a-asset-item
           id="sun-obj"
           src="/assets/models/Sun/model.obj"
@@ -23,6 +31,7 @@
           id="sun-mtl"
           src="/assets/models/Sun/materials.mtl"
         ></a-asset-item>
+        <!-- crab -->
         <a-asset-item
           id="crab-obj"
           src="/assets/models/crabs/crabsky(1)/model.obj"
@@ -31,6 +40,7 @@
           id="crab-mtl"
           src="/assets/models/crabs/crabsky(1)/materials.mtl"
         ></a-asset-item>
+        <!-- hammer -->
         <a-asset-item
           id="hammer-obj"
           src="/assets/models/Hammer/model.obj"
@@ -39,7 +49,25 @@
           id="hammer-mtl"
           src="/assets/models/Hammer/materials.mtl"
         ></a-asset-item>
-
+        <!-- island -->
+        <a-asset-item
+          id="island-obj"
+          src="/assets/models/Island/CHAHIN_ISLAND.obj"
+        ></a-asset-item>
+        <a-asset-item
+          id="island-mtl"
+          src="/assets/models/Island/CHAHIN_ISLAND.mtl"
+        ></a-asset-item>
+        <!-- EARTH -->
+        <a-asset-item
+          id="earth-obj"
+          src="/assets/models/Earth/NOVELO_EARTH.obj"
+        ></a-asset-item>
+        <a-asset-item
+          id="earth-mtl"
+          src="/assets/models/Earth/NOVELO_EARTH.mtl"
+        ></a-asset-item>
+        <!-- SUN MIXIN -->
         <a-mixin
           id="sun"
           scale="0.8 0.8 0.8"
@@ -53,10 +81,21 @@
           id="crab"
           obj-model="obj: #crab-obj; mtl: #crab-mtl"
         ></a-mixin>
+        <!-- EARTH MIXIN -->
+        <a-mixin
+          id="earth"
+          obj-model="obj: #earth-obj; mtl: #earth-mtl"
+          animation="property: rotation; dur: 90100;  loop: true;  easing: linear; to: 0 360 0;"
+        ></a-mixin>
         <!-- HAMMER MIXINS -->
         <a-mixin
           id="hammer"
           obj-model="obj: #hammer-obj; mtl: #hammer-mtl"
+        ></a-mixin>
+        <!-- ISLAND MIXINS -->
+        <a-mixin
+          id="island"
+          obj-model="obj: #island-obj; mtl: #island-mtl"
         ></a-mixin>
       </a-assets>
       <!-- camera -->
@@ -71,24 +110,50 @@
           hammer-logic
           mixin="hammer"
           rotation="0 180 0"
-          animation="property:  rotation; dur: 400;  dir: alternate; from: 0 180 0;  to: 100 180 0; loop: 1;"
+          animation="property:  rotation;
+          startEvents: rotate;
+                    dur: 200;  
+                    dir: alternate; 
+                    from: 0 180 0;  
+                    to: 100 180 0; 
+                    loop: 1;"
           position="0.075 -0.01 -0.09"
           scale=" 0.25 0.25 0.25"
         >
         </a-entity>
-        <!-- <a-entity
-          hammer-logic
-          position="0.075 -0.05 -0.07"
-          scale=" 0.25 0.25 0.25"
-          id="hammer"
-          fbx-model="src: url(/assets/models/weapon/hammer.fbx);"
-          animation-mixer="clip: *;"
-          rotation="90 0 60"
-          animation="property:  rotation; dur: 400;  dir: alternate; from: 90 0 60;  to: 0 0 60; loop: 1;"
-        ></a-entity> -->
+        <a-entity sound="src: #slap" id="hit"></a-entity>
+        <!-- timer view -->
+        <a-entity
+          timer-view
+          scale="2 2 1"
+          position="1.9 0.7 -1"
+          text="color:black"
+        >
+        </a-entity>
+
+        <!-- winning text -->
+        <a-entity id="winning-text" scale="2 2 1" position="0.4 0.7 -1">
+          <a-entity text="color: black; value: You killed "></a-entity>
+          <a-entity
+            position="0.275 0 0"
+            text="color: black;"
+            bind="text.value: score"
+          ></a-entity>
+          <a-entity
+            position="0.4 0 0"
+            text="color: black; value: Crabs"
+          ></a-entity>
+        </a-entity>
 
         <!-- SCORE -->
-        <a-entity position="-0.9 0.75 -1" bind="text.value: score"></a-entity>
+        <a-entity scale="2 2 1 " position="-0.4 0.7 -1">
+          <a-entity text="color: black; value: score:"></a-entity>
+          <a-entity
+            position="0.125 -0.0025 0"
+            bind="text.value: score"
+            text="color: black"
+          ></a-entity>
+        </a-entity>
         <!-- ring cursor -->
         <a-entity
           scale="0.025 0.025 0.025"
@@ -109,19 +174,31 @@
       </a-entity>
       <!-- ^^^camera^^^ -->
 
-      <!-- sun -->
-      <a-entity mixin="sun" obj-model="obj: #sun-obj; mtl: #sun-mtl"></a-entity>
+      <a-entity
+        light="type: ambient; color: white; intensity: 1.7"
+        position="-1 1 0"
+      >
+        <!-- sun -->
+        <a-entity mixin="sun" obj-model="obj: #sun-obj; mtl: #sun-mtl">
+        </a-entity>
+      </a-entity>
+      <!-- EARTH -->
+      <a-entity
+        mixin="earth"
+        scale="0.0025 0.0025 0.0025"
+        position="17 4.35 -14"
+      ></a-entity>
 
       <!-- table -->
       <a-entity
         scale="3  1 2"
-        position="0 0 -3"
-        material="color: orange"
+        position="0 0 -2"
+        material="color: #140E00"
         geometry="primitive: box"
       ></a-entity>
 
       <!-- holes -->
-      <a-entity position="0 0.5 -3" id="holes">
+      <a-entity position="0 0.5 -2" id="holes">
         <!-- hole1 -->
         <a-entity
           position="1 0 0.5"
@@ -166,58 +243,24 @@
         ></a-entity>
       </a-entity>
 
-      <a-entity position="0 0.6 -3 " id="crab-container">
-        <!-- <a-entity
-          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
-          animation-mixer="clip: *;"
-          scale="0.0026 0.0026 0.0026"
-          position="1 0 0.5"
-        ></a-entity>
+      <a-entity position="0 0.6 -2 " id="crab-container"> </a-entity>
+      <a-plane>
         <a-entity
-          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
-          animation-mixer="clip: *;"
-          scale="0.0026 0.0026 0.0026"
-          position="0 0 -0.5"
+          position="0 0.7 -4"
+          rotation="0 0 0"
+          mixin="island"
         ></a-entity>
-        <a-entity
-          fbx-model="src: url(/assets/models/crabs/Crab.fbx);"
-          animation-mixer="clip: *;"
-          scale="0.0026 0.0026 0.0026"
-          position="-1 0 0.5"
-        ></a-entity> -->
-
-        <!-- <a-entity
-          mixin="crab"
-          obj-model="obj: #crab-obj; mtl: #crab-mtl"
-          scale="0.3 0.3 0.3"
-          position="1 0 0.5"
-          rotation="180 0 180"
-        ></a-entity>
-        <a-entity
-          mixin="crab"
-          obj-model="obj: #crab-obj; mtl: #crab-mtl"
-          scale="0.3 0.3 0.3"
-          position="0 0 -0.5"
-          rotation="180 0 180"
-        ></a-entity>
-        <a-entity
-          mixin="crab"
-          obj-model="obj: #crab-obj; mtl: #crab-mtl"
-          scale="0.3 0.3 0.3"
-          position="-1 0 0.5"
-          rotation="180 0 180"
-        ></a-entity> -->
-      </a-entity>
-
+      </a-plane>
       <a-plane
-        position="0 0 -4"
+        position="-2.87 -2.52 -4"
         rotation="-90 0 0"
-        width="8"
-        height="8"
-        color="#f3c212"
-      ></a-plane>
+        material="color: aqua"
+        width="100"
+        height="100"
+      >
+      </a-plane>
 
-      <a-sky color="blue"></a-sky>
+      <a-sky color="pink"></a-sky>
     </a-scene>
   </body>
 </html>

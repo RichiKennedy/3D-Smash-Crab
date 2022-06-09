@@ -9,3 +9,6 @@ import "./components/world";
 
 // crab logic
 import "./components/crab-logic";
+
+// timer view
+import "./components/timer-view";
