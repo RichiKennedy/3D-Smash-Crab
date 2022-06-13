@@ -1,7 +1,6 @@
 AFRAME.registerComponent("timer-view", {
   init: function () {
-    console.log("timer-view");
-    this.el.setAttribute("text", "value", "start game");
+    this.el.setAttribute("text", "value", "hello world");
   },
 
   tick: function (time, timeDelta) {
@@ -13,7 +12,7 @@ AFRAME.registerComponent("timer-view", {
     if (timer_ongoing) {
       this.el.setAttribute("text", "value", pretty_time);
     } else {
-      this.el.setAttribute("text", "value", "Timer ended");
+      this.el.setAttribute("text", "value", "Time ended");
     }
   },
 });

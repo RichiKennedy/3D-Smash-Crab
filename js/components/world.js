@@ -14,20 +14,23 @@ AFRAME.registerComponent("world", {
   },
   init: function () {
     this.time = 0;
-
-    // game lasts 1 0 seconds
+    console.log();
+    // game lasts 1 0 second
     this.el.setAttribute("world", "gametime", 10.0 * 1000);
 
     // start the timer
     this.el.setAttribute("world", "timer_ongoing,", true);
 
     // add game reset listener
-    this.el.addEventListener("click", this.reset_game.bind(this));
+    this.el.addEventListener("mousedown", this.reset_game.bind(this));
 
     this.spawn_crabs();
   },
+
+  start_game: function () {},
+
   spawn_crabs: function () {
-    var crabs = document.getElementById("crab-container");
+    let crabs = document.getElementById("crab-container");
 
     holePositions.map(function (position) {
       let crab = create_yabbi(position);
@@ -52,6 +55,7 @@ AFRAME.registerComponent("world", {
     if (timer_ongoing === false) {
       // kill the crabs
       this.kill_all_crabs();
+
       //   reset score
       AFRAME.scenes[0].emit("resetScore", {});
       // reset timer
@@ -59,9 +63,10 @@ AFRAME.registerComponent("world", {
       this.el.setAttribute("world", "gametime", 10.0 * 1000);
 
       // start the timer
-      this.el.setAttribute("world", "timer_ongoing,", true);
+      this.el.setAttribute("world", "timer_ongoing", true);
     }
   },
+
   show_win_text: function () {
     let win_text = document.getElementById("winning-text");
     let visible = win_text.getAttribute("visible");
@@ -80,7 +85,7 @@ AFRAME.registerComponent("world", {
   },
 
   tick: function (time, timeDelta) {
-    var crabs = document.querySelectorAll(".crab");
+    let crabs = document.querySelectorAll(".crab");
 
     // decrement the game timer
     let { gametime, timer_ongoing } = this.el.getAttribute("world");
@@ -103,10 +108,9 @@ AFRAME.registerComponent("world", {
       }
     }
 
-    if (timer_ongoing == true) {
+    if (timer_ongoing === true) {
       this.hide_win_text();
     }
-
     if (timer_ongoing === false) {
       this.kill_all_crabs();
       this.show_win_text();
