@@ -34,8 +34,9 @@ AFRAME.registerComponent("crab-logic", {
       if (this.can_die === true) {
         crabs.removeChild(this.el);
 
-        AFRAME.scenes[0].emit("increaseScore", { points: 1 });
-        console.log("die");
+        AFRAME.scenes[0].emit("increaseScore", {
+          points: 1,
+        });
 
         let hammer = document.getElementById("player-hammer");
         hammer.emit("rotate");

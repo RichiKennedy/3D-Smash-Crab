@@ -1274,7 +1274,6 @@ AFRAME.registerComponent("crab-logic", {
         AFRAME.scenes[0].emit("increaseScore", {
           points: 1
         });
-        console.log("die");
         var hammer = document.getElementById("player-hammer");
         hammer.emit("rotate");
         hit.components.sound.playSound();
@@ -1335,8 +1334,7 @@ AFRAME.registerComponent("hammer-logic", {
 
 AFRAME.registerComponent("timer-view", {
   init: function init() {
-    console.log("timer-view");
-    this.el.setAttribute("text", "value", "start game");
+    this.el.setAttribute("text", "value", "hello world");
   },
   tick: function tick(time, timeDelta) {
     var world = document.querySelector("a-scene");
@@ -1350,7 +1348,7 @@ AFRAME.registerComponent("timer-view", {
     if (timer_ongoing) {
       this.el.setAttribute("text", "value", pretty_time);
     } else {
-      this.el.setAttribute("text", "value", "Timer ended");
+      this.el.setAttribute("text", "value", "Time ended");
     }
   }
 });
@@ -1381,15 +1379,17 @@ AFRAME.registerComponent("world", {
     }
   },
   init: function init() {
-    this.time = 0; // game lasts 1 0 seconds
+    this.time = 0;
+    console.log(); // game lasts 1 0 second
 
     this.el.setAttribute("world", "gametime", 10.0 * 1000); // start the timer
 
     this.el.setAttribute("world", "timer_ongoing,", true); // add game reset listener
 
-    this.el.addEventListener("click", this.reset_game.bind(this));
+    this.el.addEventListener("mousedown", this.reset_game.bind(this));
     this.spawn_crabs();
   },
+  start_game: function start_game() {},
   spawn_crabs: function spawn_crabs() {
     var crabs = document.getElementById("crab-container");
     _holes__WEBPACK_IMPORTED_MODULE_1__.holePositions.map(function (position) {
@@ -1419,7 +1419,7 @@ AFRAME.registerComponent("world", {
 
       this.el.setAttribute("world", "gametime", 10.0 * 1000); // start the timer
 
-      this.el.setAttribute("world", "timer_ongoing,", true);
+      this.el.setAttribute("world", "timer_ongoing", true);
     }
   },
   show_win_text: function show_win_text() {
@@ -1464,7 +1464,7 @@ AFRAME.registerComponent("world", {
       }
     }
 
-    if (timer_ongoing == true) {
+    if (timer_ongoing === true) {
       this.hide_win_text();
     }
 
