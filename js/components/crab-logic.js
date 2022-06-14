@@ -38,8 +38,6 @@ AFRAME.registerComponent("crab-logic", {
           points: 1,
         });
 
-        let hammer = document.getElementById("player-hammer");
-        hammer.emit("rotate");
         hit.components.sound.playSound();
       }
     }.bind(this);

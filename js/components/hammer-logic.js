@@ -2,6 +2,12 @@ AFRAME.registerComponent("hammer-logic", {
   init: function () {
     let crabs = [];
 
+    document.addEventListener("mousedown", function () {
+      let hammer = document.getElementById("player-hammer");
+      hammer.emit("rotate");
+      let woosh = document.getElementById("woosh2");
+      woosh.components.sound.playSound();
+    });
     this.el.addEventListener(
       "crabs_spawned",
       function () {

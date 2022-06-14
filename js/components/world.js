@@ -16,7 +16,7 @@ AFRAME.registerComponent("world", {
     this.time = 0;
     console.log();
     // game lasts 1 0 second
-    this.el.setAttribute("world", "gametime", 10.0 * 1000);
+    this.el.setAttribute("world", "gametime", 20.0 * 1000);
 
     // start the timer
     this.el.setAttribute("world", "timer_ongoing,", true);
@@ -60,7 +60,7 @@ AFRAME.registerComponent("world", {
       AFRAME.scenes[0].emit("resetScore", {});
       // reset timer
       // game lasts 1 0 seconds
-      this.el.setAttribute("world", "gametime", 10.0 * 1000);
+      this.el.setAttribute("world", "gametime", 20.0 * 1000);
 
       // start the timer
       this.el.setAttribute("world", "timer_ongoing", true);
